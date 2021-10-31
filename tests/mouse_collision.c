@@ -11,10 +11,8 @@ int main(int argc, char **argv)
 
     HideCursor();
 
-    // ToggleFullscreen();
-
-    float radius_cursor = 10;
-    float radius_point = 20;
+    float radiusCursor = 10;
+    float radiusPoint = 20;
 
     Vector2 points_positions[4] = {
         (Vector2){screenWidth / 4, screenHeight / 4},
@@ -22,7 +20,7 @@ int main(int argc, char **argv)
         (Vector2){screenWidth / 4, (screenHeight / 4) * 3},
         (Vector2){(screenWidth / 4) * 3, (screenHeight / 4) * 3}};
 
-    Vector2 mouse_position;
+    Vector2 mousePosition;
 
     while (!WindowShouldClose())
     {
@@ -30,14 +28,14 @@ int main(int argc, char **argv)
 
         ClearBackground(RAYWHITE);
 
-        mouse_position = GetMousePosition();
-        DrawCircle(mouse_position.x, mouse_position.y, radius_cursor, DARKBLUE);
+        mousePosition = GetMousePosition();
+        DrawCircleV(mousePosition, radiusCursor, DARKBLUE);
 
         for (int i = 0; i < 4; ++i)
         {
-            DrawCircleV(points_positions[i], radius_point, RED);
+            DrawCircleV(points_positions[i], radiusPoint, RED);
 
-            if (CheckCollisionCircles(mouse_position, radius_cursor, points_positions[i], radius_point))
+            if (CheckCollisionCircles(mousePosition, radiusCursor, points_positions[i], radiusPoint))
             {
                 DrawText(TextFormat("%d", i + 1), screenWidth / 2, screenHeight / 2, 50, BLACK);
             }
