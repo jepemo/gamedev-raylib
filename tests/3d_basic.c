@@ -11,12 +11,33 @@ int main(int argc, char **argv)
 
     Camera3D camera = {0};
     camera.position = (Vector3){0.0f, 10.0f, 10.0f};
-    camera.target = (Vector3){0.0f, 0.0f, 0.0f};
+    camera.target = (Vector3){2.0f, 0.0f, 2.0f};
     camera.up = (Vector3){0.0f, 1.0f, 0.0f};
     camera.fovy = 45.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
-    Vector3 cubePos = {0.0f, 0.0f, 0.0f};
+    Vector3 cubesPositions[9] = {
+        (Vector3){0.0f, 0.0f, 0.0f},
+        (Vector3){2.0f, 0.0f, 0.0f},
+        (Vector3){4.0f, 0.0f, 0.0f},
+        (Vector3){0.0f, 0.0f, 2.0f},
+        (Vector3){2.0f, 0.0f, 2.0f},
+        (Vector3){4.0f, 0.0f, 2.0f},
+        (Vector3){0.0f, 0.0f, 4.0f},
+        (Vector3){2.0f, 0.0f, 4.0f},
+        (Vector3){4.0f, 0.0f, 4.0f}};
+
+    Color cubeColours[9] = {
+        GRAY,
+        YELLOW,
+        RED,
+        BLUE,
+        GREEN,
+        MAGENTA,
+        MAROON,
+        SKYBLUE,
+        PURPLE};
+
     Vector3 cubeSize = {2.0f, 2.0f, 2.0f};
 
     while (!WindowShouldClose())
@@ -39,20 +60,24 @@ int main(int argc, char **argv)
             camera.projection = CAMERA_ORTHOGRAPHIC;
 
         BeginDrawing();
+        {
+            ClearBackground(RAYWHITE);
 
-        ClearBackground(RAYWHITE);
+            BeginMode3D(camera);
+            {
 
-        BeginMode3D(camera);
+                for (int i = 0; i < 9; ++i)
+                {
+                    DrawCubeV(cubesPositions[i], cubeSize, cubeColours[i]);
+                    DrawCubeWiresV(cubesPositions[i], cubeSize, BLACK);
+                }
 
-        DrawCubeV(cubePos, cubeSize, RED);
-        DrawCubeWiresV(cubePos, cubeSize, MAROON);
+                DrawGrid(20, 1.0f);
+            }
+            EndMode3D();
 
-        DrawGrid(10, 1.0f);
-
-        EndMode3D();
-
-        DrawFPS(10, 10);
-
+            DrawFPS(10, 10);
+        }
         EndDrawing();
     }
 
