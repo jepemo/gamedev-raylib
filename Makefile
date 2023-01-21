@@ -1,6 +1,7 @@
 all: build exec
 
 build:
+	mkdir -p bin
 	make -C tests
 
 exec:
