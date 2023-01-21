@@ -17,3 +17,7 @@ cd raylib/src/
 make PLATFORM=PLATFORM_DESKTOP RAYLIB_LIBTYPE=SHARED
 sudo make install RAYLIB_LIBTYPE=SHARED
 ```
+
+## Ideas
+
+To implement: https://gamedev.stackexchange.com/questions/854/what-are-good-games-to-earn-your-wings-with
