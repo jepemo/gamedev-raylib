@@ -6,20 +6,20 @@
 
 const char *GREETING = "Welcome to this adventure.";
 
-const char *SENTS_MOVE[MAX_SENTENCES] = {
-    "You are in the middle "
-    "of a forest. Where do you decide to go?"};
+const char **SENTS_MOVE[MAX_SENTENCES] = {
+    {"You are in the middle of a forest.", "Where do you decide to go?"}};
 
-const char *SENTS_IN_OUT[MAX_SENTENCES] = {
-    "You have reached the entrance of a cave. What will you do?"};
+const char **SENTS_IN_OUT[MAX_SENTENCES] = {
+    {"You have reached the entrance of a cave.", "What will you do?"}};
 
-const char *SENTS_YES_NO[MAX_SENTENCES] = {
-    "You keep walking but you only see trees and more trees. Do you decide to "
-    "continue?"};
+const char **SENTS_YES_NO[MAX_SENTENCES] = {
+    {"You keep walking but you only see trees and more trees.",
+     "Do you decide to continue?"}};
 
 const char *MOVE_RESPONSES[2] = {"Go north", "Go south"};
 const char *IN_OUT_RESPONSES[2] = {"Enter", "Continue on the outside"};
 const char *YES_NO_RESPONSES[2] = {"Yes", "No"};
+int key_pressed = 0;
 
 typedef struct {
   int step;
@@ -48,21 +48,59 @@ const char *get_option(int type, int num) {
   return 0;
 }
 
-void draw_texts(GameState *state) {
-  const char *sentence_text = SENTS_MOVE[state->sentence_index];
-  const int font_size = 18;
-  const int text_width = MeasureText(sentence_text, font_size);
-  const int text_x_pos = SCREEN_WIDTH / 2 - text_width / 2;
-  const int text_y_pos = SCREEN_HEIGHT / 4;
+const char **get_sentence(int type, int idx) {
+  if (type == 0) {
+    return SENTS_MOVE[idx];
+  } else if (type == 1) {
+    return SENTS_IN_OUT[idx];
+  } else if (type == 2) {
+    return SENTS_YES_NO[idx];
+  }
 
-  DrawText(sentence_text, text_x_pos, text_y_pos, font_size, BLACK);
+  return 0;
+}
 
+void draw_option(int type, int num, int height_diff) {
   // Options
-  DrawText(get_option(state->sentence_type, 0), SCREEN_WIDTH / 2,
-           SCREEN_HEIGHT / 2, 15, BLACK);
+  char option[128];
+  sprintf(option, "%d - ", num + 1);
+  strcat(option, get_option(type, num));
+  DrawText(option, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + height_diff, 15,
+           BLACK);
+}
 
-  DrawText(get_option(state->sentence_type, 1), SCREEN_WIDTH / 2,
-           (SCREEN_HEIGHT / 2) + 10, 15, BLACK);
+void draw_texts(GameState *state) {
+  const char **sentence_text =
+      get_sentence(state->sentence_type, state->sentence_index);
+
+  printf("%s", sentence_text[0]);
+  // const int font_size = 18;
+  // const int text_width = MeasureText(sentence_text[0], font_size);
+  // const int text_x_pos = SCREEN_WIDTH / 2 - text_width / 2;
+  // const int text_y_pos = SCREEN_HEIGHT / 4;
+
+  // DrawText(sentence_text[0], text_x_pos, text_y_pos, font_size, BLACK);
+  // DrawText(sentence_text[1], text_x_pos, text_y_pos + 10, font_size, BLACK);
+
+  // // Options
+  // draw_option(state->sentence_type, 0, 0);
+  // draw_option(state->sentence_type, 1, 10);
+}
+
+void update_state(GameState *state) {
+  if (key_pressed == 0) {
+    if (IsKeyDown(KEY_ONE) || IsKeyDown(KEY_TWO)) {
+      key_pressed = 1;
+      state->health -= 1;
+      state->step += 1;
+      state->sentence_type = rand() % 3;
+      state->sentence_index = rand() % MAX_SENTENCES;
+    }
+  }
+
+  if (IsKeyUp(KEY_ONE) && IsKeyUp(KEY_TWO)) {
+    key_pressed = 0;
+  }
 }
 
 int main(int argc, char **argv) {
@@ -72,6 +110,8 @@ int main(int argc, char **argv) {
       .health = 100, .sentence_index = 0, .sentence_type = 0, .step = 0};
 
   while (!WindowShouldClose()) {
+    update_state(&game_state);
+
     BeginDrawing();
     ClearBackground(RAYWHITE);
     draw_gui();
